@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Chronic Disease Prediction</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        body {
+            background: url("https://png.pngtree.com/background/20230604/original/pngtree-stethoscope-with-ecg-line-picture-image_2874359.jpg") 
+                        no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            margin: 0; padding: 0;
+        }
+
+        body::before {
+            content: "";
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5); z-index: -1;
+        }
+
+        .auth-container {
+            background-color: rgba(255,255,255,0.95);
+            width: 350px; margin: 120px auto; padding: 30px 40px;
+            border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        h2 { color: #007BFF; margin-bottom: 20px; font-size: 24px; }
+
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; color: #333; font-weight: bold; margin-bottom: 5px; }
+
+        input {
+            width: 100%; padding: 10px;
+            border: 1px solid #ccc; border-radius: 6px;
+            box-sizing: border-box; font-size: 14px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0,123,255,0.5);
+        }
+
+        input.invalid {
+            border: 1px solid #e63946;
+            box-shadow: 0 0 5px rgba(230, 57, 70, 0.5);
+        }
+
+        input.valid {
+            border: 1px solid #2a9d8f;
+            box-shadow: 0 0 5px rgba(42, 157, 143, 0.6);
+        }
+
+        .error-text {
+            color: #e63946;
+            font-size: 13px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .btn {
+            width: 100%; padding: 10px; background-color: #007BFF;
+            border: none; border-radius: 6px; color: white;
+            font-weight: bold; cursor: pointer;
+            transition: 0.3s; font-size: 16px;
+        }
+        .btn:hover { background-color: #0056b3; }
+
+        .auth-switch { margin-top: 15px; color: #333; }
+        .auth-switch a {
+            color: #007BFF; text-decoration: none; font-weight: bold;
+        }
+        .auth-switch a:hover { text-decoration: underline; }
+
+        .error, .success { text-align: center; margin-top: 10px; font-weight: 500; }
+        .error { color: #e63946; }
+        .success { color: #2a9d8f; }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <h2>Create an Account</h2>
+
+        <form method="POST" action="{{ url_for('register') }}" onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" placeholder="e.g., yuva_145" required>
+                <div id="usernameError" class="error-text">Username must include letters, numbers, and a special character.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" name="email" id="email" placeholder="e.g., yuvashree@gmail.com" required>
+                <div id="emailError" class="error-text">Please enter a valid email address.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" placeholder="At least 6 characters" required>
+                <div id="passwordError" class="error-text">Password must be at least 6 characters and include letters, numbers, and a special character.</div>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">Confirm Password</label>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter your password" required>
+                <div id="confirmError" class="error-text">Passwords do not match.</div>
+            </div>
+
+            <button type="submit" class="btn">Register</button>
+        </form>
+
+        {% if msg %}
+            <p class="{{ 'error' if 'exists' in msg or 'Incorrect' in msg else 'success' }}">{{ msg }}</p>
+        {% endif %}
+
+        <p class="auth-switch">
+            Already have an account? <a href="{{ url_for('login') }}">Login here</a>
+        </p>
+    </div>
+
+    <script>
+        const username = document.getElementById("username");
+        const email = document.getElementById("email");
+        const password = document.getElementById("password");
+        const confirm = document.getElementById("confirm_password");
+
+        const usernameError = document.getElementById("usernameError");
+        const emailError = document.getElementById("emailError");
+        const passwordError = document.getElementById("passwordError");
+        const confirmError = document.getElementById("confirmError");
+
+        // Validation patterns
+        const usernamePattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?]).{4,}$/;
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const passPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=<>?]).{6,}$/;
+
+        // Real-time validation
+        username.addEventListener("input", () => validateInput(username, usernamePattern, usernameError));
+        email.addEventListener("input", () => validateInput(email, emailPattern, emailError));
+        password.addEventListener("input", () => validateInput(password, passPattern, passwordError));
+        confirm.addEventListener("input", validateConfirmPassword);
+
+        function validateInput(input, pattern, errorElem) {
+            if (pattern.test(input.value.trim())) {
+                input.classList.remove("invalid");
+                input.classList.add("valid");
+                errorElem.style.display = "none";
+            } else {
+                input.classList.remove("valid");
+                input.classList.add("invalid");
+                errorElem.style.display = "block";
+            }
+        }
+
+        function validateConfirmPassword() {
+            if (confirm.value === password.value && confirm.value !== "") {
+                confirm.classList.add("valid");
+                confirm.classList.remove("invalid");
+                confirmError.style.display = "none";
+            } else {
+                confirm.classList.remove("valid");
+                confirm.classList.add("invalid");
+                confirmError.style.display = "block";
+            }
+        }
+
+        function validateForm() {
+            validateInput(username, usernamePattern, usernameError);
+            validateInput(email, emailPattern, emailError);
+            validateInput(password, passPattern, passwordError);
+            validateConfirmPassword();
+
+            const invalids = document.querySelectorAll(".invalid");
+            return invalids.length === 0;
+        }
+    </script>
+</body>
+</html>

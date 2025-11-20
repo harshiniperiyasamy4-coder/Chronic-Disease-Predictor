@@ -1,2 +1,1 @@
-# Chronic-Disease-Predictor
-A Chronic Disease Predictor
+# MINI-PROJECT

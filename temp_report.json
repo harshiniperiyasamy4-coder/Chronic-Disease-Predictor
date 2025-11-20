@@ -1,0 +1,1 @@
+{"inputs": {"Age": 12.0, "Gender": "Male", "BMI": 12.0, "Systolic BP": 122.0, "Cholesterol": 125.0, "Glucose": 125.0, "Physical Activity": 25.0, "Smoking Status": "Never", "Alcohol Intake": 1.0, "Family History": "Yes"}, "predictions": {"Hypertension": 0.13, "Diabetes": 0.07, "Heart Disease": 0.01}}

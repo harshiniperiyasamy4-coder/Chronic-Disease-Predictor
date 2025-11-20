@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Chronic Disease Prediction</title>
+    <style>
+        body {
+            background: url("https://png.pngtree.com/background/20230604/original/pngtree-stethoscope-with-ecg-line-picture-image_2874359.jpg") 
+                        no-repeat center center fixed;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: -1;
+        }
+
+        .auth-container {
+            background-color: rgba(255, 255, 255, 0.95);
+            width: 350px;
+            margin: 120px auto;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        h2 {
+            color: #007BFF;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0,123,255,0.5);
+        }
+
+        /* Red border for invalid inputs */
+        .error-input {
+            border-color: #e63946 !important;
+            box-shadow: 0 0 6px rgba(230,57,70,0.6) !important;
+        }
+
+        .error-text {
+            color: #e63946;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .auth-switch, .forgot-password {
+            margin-top: 15px;
+            color: #333;
+        }
+
+        .auth-switch a, .forgot-password a {
+            color: #007BFF;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .auth-switch a:hover, .forgot-password a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <h2>Login</h2>
+
+        {% if error %}
+            <div class="error-text" style="text-align:center;">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" action="{{ url_for('login') }}" onsubmit="return validateLogin()">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" name="username" id="username" placeholder="Enter username" required>
+                <div id="usernameError" class="error-text" style="display:none;">Username must contain letters, numbers, and a special character (min 4 chars).</div>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" name="password" id="password" placeholder="Enter password" required>
+                <div id="passwordError" class="error-text" style="display:none;">Password must be at least 6 chars and include a letter, number, and special character.</div>
+            </div>
+
+            <button type="submit" class="btn">Login</button>
+        </form>
+
+        <p class="forgot-password">
+            <a href="{{ url_for('forgot_password') }}">Forgot Password?</a>
+        </p>
+
+        <p class="auth-switch">
+            Don't have an account? <a href="{{ url_for('register') }}">Register here</a>
+        </p>
+    </div>
+
+    <script>
+        function validateLogin() {
+            const username = document.getElementById("username");
+            const password = document.getElementById("password");
+            const usernameError = document.getElementById("usernameError");
+            const passwordError = document.getElementById("passwordError");
+
+            let valid = true;
+
+            // Username: must contain letters, numbers, and special char (min 4 chars)
+            const usernamePattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]:;"'<>,.?/]).{4,}$/;
+            if (!usernamePattern.test(username.value.trim())) {
+                username.classList.add("error-input");
+                usernameError.style.display = "block";
+                valid = false;
+            } else {
+                username.classList.remove("error-input");
+                usernameError.style.display = "none";
+            }
+
+            // Password: at least 6 chars, include letter, number, special char
+            const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}[\]:;"'<>,.?/]).{6,}$/;
+            if (!passwordPattern.test(password.value)) {
+                password.classList.add("error-input");
+                passwordError.style.display = "block";
+                valid = false;
+            } else {
+                password.classList.remove("error-input");
+                passwordError.style.display = "none";
+            }
+
+            return valid;
+        }
+    </script>
+</body>
+</html>
